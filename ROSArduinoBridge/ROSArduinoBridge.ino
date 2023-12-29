@@ -63,14 +63,17 @@
    #define ARDUINO_ENC_COUNTER
 
    /* L298 Motor driver*/
-   #define L298_MOTOR_DRIVER
+   //#define L298_MOTOR_DRIVER
+
+   /*cytron MC10C R3 driver*/
+   #define CYTRON_MOTOR_DRIVER
 #endif
 
 //#define USE_SERVOS  // Enable use of PWM servos as defined in servos.h
 #undef USE_SERVOS     // Disable use of PWM servos
 
 /* Serial port baud rate */
-#define BAUDRATE     57600
+#define BAUDRATE     9600
 
 /* Maximum PWM signal */
 #define MAX_PWM        255
@@ -249,6 +252,10 @@ int runCommand() {
 void setup() {
   Serial.begin(BAUDRATE);
 
+  //make sure built in led is off to save battery.
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, LOW);
+
 // Initialize the motor controller if used */
 #ifdef USE_BASE
   #ifdef ARDUINO_ENC_COUNTER
@@ -297,9 +304,11 @@ void loop() {
     
     // Read the next character
     chr = Serial.read();
+    //Serial.println(chr);
 
     // Terminate a command with a CR
     if (chr == 13) {
+      //Serial.println("here");
       if (arg == 1) argv1[index] = NULL;
       else if (arg == 2) argv2[index] = NULL;
       runCommand();
@@ -307,6 +316,7 @@ void loop() {
     }
     // Use spaces to delimit parts of the command
     else if (chr == ' ') {
+      //Serial.println("here now");
       // Step through the arguments
       if (arg == 0) arg = 1;
       else if (arg == 1)  {
